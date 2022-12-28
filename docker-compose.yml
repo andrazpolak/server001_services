@@ -1,0 +1,80 @@
+version: "3.7"
+
+services:
+  redismod:
+    image: redislabs/redismod
+    restart: always
+    ports:
+      - 6380:6379
+    networks:
+      - frontend
+    volumes:
+      - redismod-cache:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5" # number of files or file count
+        max-size: "10m" # file size
+  nodered:
+    image: nodered/node-red
+    restart: always
+    environment:
+      - TZ=Europe/Amsterdam
+    networks:
+      - frontend
+    ports:
+      - 1888:1880
+    volumes:
+      - ./node-red-data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5" # number of files or file count
+        max-size: "10m" # file size
+  mongo:
+    image: mongo:4.2.21
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - volume_mongodb:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5" # number of files or file count
+        max-size: "10m" # file size
+  influxdb:
+    image: influxdb
+    restart: always
+    env_file:
+      - ./.env
+    volumes:
+      - volume-influxdb:/var/lib/influxdb2
+      - ./influx_config:/etc/influxdb2
+    ports:
+      - 8086:8086
+    networks:
+      - frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5" # number of files or file count
+        max-size: "10m" # file size
+
+networks:
+  frontend:
+    # external: true
+
+volumes:
+  # redis-cache:
+  #   driver: local
+  redismod-cache:
+    driver: local
+  volume_mongodb:
+    driver: local
+  volume-influxdb:
+    driver: local

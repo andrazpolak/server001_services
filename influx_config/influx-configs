@@ -1,0 +1,20 @@
+[default]
+  url = "http://localhost:8086"
+  token = "QA2LNtaqe7KI9iw0Qi-ALa4xJMAGZtTpz-ivYVPMdkK5kEdxR8uGGKt4CfM5TPHln7u3A8hI4H5HrCFoMByo8g=="
+  org = "atp"
+  active = true
+# 
+# [eu-central]
+#   url = "https://eu-central-1-1.aws.cloud2.influxdata.com"
+#   token = "XXX"
+#   org = ""
+# 
+# [us-central]
+#   url = "https://us-central1-1.gcp.cloud2.influxdata.com"
+#   token = "XXX"
+#   org = ""
+# 
+# [us-west]
+#   url = "https://us-west-2-1.aws.cloud2.influxdata.com"
+#   token = "XXX"
+#   org = ""
