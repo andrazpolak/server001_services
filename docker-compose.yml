@@ -1,39 +1,39 @@
 version: "3.7"
 
 services:
-  redismod:
-    image: redislabs/redismod
-    restart: always
-    ports:
-      - 6380:6379
-    networks:
-      - frontend
-    volumes:
-      - redismod-cache:/data
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "5" # number of files or file count
-        max-size: "10m" # file size
-  nodered:
-    image: nodered/node-red
-    restart: always
-    environment:
-      - TZ=Europe/Amsterdam
-    networks:
-      - frontend
-    ports:
-      - 1888:1880
-    volumes:
-      - ./node-red-data:/data
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "5" # number of files or file count
-        max-size: "10m" # file size
+  # redismod:
+  #   image: redislabs/redismod
+  #   restart: unless-stopped
+  #   ports:
+  #     - 6380:6379
+  #   networks:
+  #     - frontend
+  #   volumes:
+  #     - redismod-cache:/data
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-file: "5" # number of files or file count
+  #       max-size: "10m" # file size
+  # nodered:
+  #   image: nodered/node-red
+  #   restart: unless-stopped
+  #   environment:
+  #     - TZ=Europe/Amsterdam
+  #   networks:
+  #     - frontend
+  #   ports:
+  #     - 1888:1880
+  #   volumes:
+  #     - ./node-red-data:/data
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-file: "5" # number of files or file count
+  #       max-size: "10m" # file size
   mongo:
     image: mongo:4.2.21
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./.env
     volumes:
@@ -47,18 +47,51 @@ services:
       options:
         max-file: "5" # number of files or file count
         max-size: "10m" # file size
-  influxdb:
-    image: influxdb
-    restart: always
+  mongo_product_database:
+    image: mongo:4.2.21
+    restart: unless-stopped
     env_file:
       - ./.env
     volumes:
-      - volume-influxdb:/var/lib/influxdb2
-      - ./influx_config:/etc/influxdb2
+      - volume-mongodb-product-database:/data/db
     ports:
-      - 8086:8086
+      - 27018:27017
     networks:
       - frontend
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5" # number of files or file count
+        max-size: "10m" # file size
+  # influxdb:
+  #   image: influxdb
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ./.env
+  #   volumes:
+  #     - volume-influxdb:/var/lib/influxdb2
+  #     - ./influx_config:/etc/influxdb2
+  #   ports:
+  #     - 8086:8086
+  #   networks:
+  #     - frontend
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-file: "5" # number of files or file count
+  #       max-size: "10m" # file size
+
+  websitenetopir:
+    image: andrazpolak/website-netopir:0.0.1
+    restart: unless-stopped
+    ports:
+      - 8087:80
+    stdin_open: true
+    environment:
+      - ENVIRONMENT=production
+    networks:
+      - frontend
+
     logging:
       driver: "json-file"
       options:
@@ -74,7 +107,10 @@ volumes:
   #   driver: local
   redismod-cache:
     driver: local
+  # mongodb trader
   volume_mongodb:
     driver: local
   volume-influxdb:
+    driver: local
+  volume-mongodb-product-database:
     driver: local
